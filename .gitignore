@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# CMake build directories
+build/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/

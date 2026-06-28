@@ -1,0 +1,13 @@
+# Pythonのソートアルゴリズム実装をpytestでテストするための環境。
+#
+# 使い方:
+#   docker build -f docker/Dockerfile.python -t sorting-python .
+#   docker run --rm sorting-python
+FROM python:3.12-slim
+
+WORKDIR /workspace
+COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["pytest", "sorting/", "-v"]
