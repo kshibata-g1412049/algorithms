@@ -1,0 +1,17 @@
+# Pythonのソートアルゴリズム実装を対話的に試すための環境。
+#
+# 使い方:
+#   docker build -f docker/Dockerfile.python -t sorting-python .
+#   docker run --rm -it sorting-python
+#
+# コンテナ内で実行できること（デフォルトではbashシェルが起動する）:
+#   - テストを実行する:   pytest sorting/ -v
+#   - CLIで実際に試す:   python cli/sort_cli.py bubble 5 3 1 4 2
+FROM python:3.12-slim
+
+WORKDIR /workspace
+COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["bash"]
