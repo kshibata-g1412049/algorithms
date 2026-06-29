@@ -1,10 +1,10 @@
-function test_rrt()
-% TEST_RRT rrt関数のテストスクリプト（MATLAB/Octave両対応）。
+function test_goal_biased_rrt()
+% TEST_GOAL_BIASED_RRT goal_biased_rrt関数のテストスクリプト（MATLAB/Octave両対応）。
 %
 %   このフォルダを単独で取り出してそのまま実行できる（外部依存なし）。
 %
-%   RRTは乱数を使うアルゴリズムであり、固定シードでもC++/Python/MATLAB間で
-%   同じ乱数列にはならない（言語ごとに乱数生成器の実装が異なるため）。
+%   Goal-biased RRTは乱数を使うアルゴリズムであり、固定シードでもC++/Python/
+%   MATLAB間で同じ乱数列にはならない（言語ごとに乱数生成器の実装が異なるため）。
 %   そのため、ここでは出力の厳密な値ではなく、以下の「性質」を検証する
 %   プロパティベーステストを行う:
 %     1. 十分大きなmax_iterationsであれば、複数の固定シードで経路が見つかる。
@@ -16,7 +16,7 @@ function test_rrt()
 %     7. max_iterationsが極端に小さい場合は空、または性質を満たす経路のみが返る。
 %
 %   実行方法: MATLAB/Octave上でこのスクリプトを実行する。
-%     >> test_rrt
+%     >> test_goal_biased_rrt
 %   全テストが成功すれば "All tests passed." が表示される。
 
     bounds = [0, 0, 10, 10];
@@ -29,7 +29,7 @@ function test_rrt()
     % 1〜5: 障害物なしのシンプルなシナリオを複数シードで検証
     no_obstacles = zeros(0, 3);
     for seed = [1, 2, 3]
-        path = rrt(no_obstacles, bounds, start, goal, goal_radius, step_size, max_iterations, seed);
+        path = goal_biased_rrt(no_obstacles, bounds, start, goal, goal_radius, step_size, max_iterations, seed);
         assert_valid_path(path, start, goal, goal_radius, step_size, no_obstacles, true, ...
             sprintf('no obstacles, seed=%d', seed));
     end
@@ -37,13 +37,13 @@ function test_rrt()
     % 6: start-goal間に大きな円障害物を配置し、迂回が必要なシナリオ
     with_obstacle = [5, 5, 2];
     for seed = [1, 2, 3]
-        path = rrt(with_obstacle, bounds, start, goal, goal_radius, step_size, max_iterations, seed);
+        path = goal_biased_rrt(with_obstacle, bounds, start, goal, goal_radius, step_size, max_iterations, seed);
         assert_valid_path(path, start, goal, goal_radius, step_size, with_obstacle, true, ...
             sprintf('with obstacle, seed=%d', seed));
     end
 
     % 7: max_iterationsが極端に小さい場合（空、または性質を満たす経路のみ許容）
-    path = rrt(no_obstacles, bounds, start, goal, goal_radius, step_size, 1, 42);
+    path = goal_biased_rrt(no_obstacles, bounds, start, goal, goal_radius, step_size, 1, 42);
     assert_valid_path(path, start, goal, goal_radius, step_size, no_obstacles, false, ...
         'tiny max_iterations');
 
