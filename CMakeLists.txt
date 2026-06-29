@@ -19,3 +19,17 @@ add_subdirectory(sorting/quick_sort/cpp quick_sort)
 add_subdirectory(sorting/heap_sort/cpp heap_sort)
 add_subdirectory(sorting/shell_sort/cpp shell_sort)
 add_subdirectory(sorting/counting_sort/cpp counting_sort)
+
+# sort_cli: 8アルゴリズムを実際に試せるCLIサンプル。各アルゴリズムの単独ビルド
+# （sorting/<algo>/cpp/CMakeLists.txt）には含めず、このroot集約ビルドにのみ追加する。
+add_executable(sort_cli cli/sort_cli.cpp)
+target_link_libraries(sort_cli PRIVATE
+    bubble_sort
+    selection_sort
+    insertion_sort
+    merge_sort
+    quick_sort
+    heap_sort
+    shell_sort
+    counting_sort
+)
