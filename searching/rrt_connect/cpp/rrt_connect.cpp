@@ -230,6 +230,15 @@ std::vector<std::pair<double, double>> rrtConnect(
                 // treeBの経路: newIndexB→root(treeB)の順（そのままの順）。
                 std::vector<std::pair<double, double>> pathB =
                     pathToRoot(treeB, newIndexB);
+#ifdef RRT_CONNECT_DEBUG
+                std::cerr << "DEBUG newIndexA=" << newIndexA << " (" << treeA[newIndexA].x << "," << treeA[newIndexA].y << ")"
+                          << " newIndexB=" << newIndexB << " (" << treeB[newIndexB].x << "," << treeB[newIndexB].y << ")"
+                          << " swapped=" << swapped << " pathA.size=" << pathA.size()
+                          << " pathB.size=" << pathB.size() << std::endl;
+                std::cerr << "pathB contents: ";
+                for (auto&p : pathB) std::cerr << "(" << p.first << "," << p.second << ") ";
+                std::cerr << std::endl;
+#endif
 
                 // treeAがstart側かgoal側かによって連結順を決める。
                 std::vector<std::pair<double, double>> fullPath;
