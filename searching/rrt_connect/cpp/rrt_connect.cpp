@@ -221,36 +221,28 @@ std::vector<std::pair<double, double>> rrtConnect(
 
             if (reached && newIndexB != -1) {
                 // 4. 2つの木が接続できた。treeA側の経路とtreeB側の経路を結合する。
-                // treeAの経路: root(treeA)→newIndexAの順に並べる
-                // （pathToRootはnewIndexA→rootの順を返すので反転する）。
+                // pathToRoot(tree, idx)は idx→...→root の順を返す。
+                // treeAの経路（idx=newIndexA→...→treeAのroot）
                 std::vector<std::pair<double, double>> pathA =
                     pathToRoot(treeA, newIndexA);
-                std::reverse(pathA.begin(), pathA.end());
-
-                // treeBの経路: newIndexB→root(treeB)の順（そのままの順）。
+                // treeBの経路（idx=newIndexB→...→treeBのroot）
                 std::vector<std::pair<double, double>> pathB =
                     pathToRoot(treeB, newIndexB);
-#ifdef RRT_CONNECT_DEBUG
-                std::cerr << "DEBUG newIndexA=" << newIndexA << " (" << treeA[newIndexA].x << "," << treeA[newIndexA].y << ")"
-                          << " newIndexB=" << newIndexB << " (" << treeB[newIndexB].x << "," << treeB[newIndexB].y << ")"
-                          << " swapped=" << swapped << " pathA.size=" << pathA.size()
-                          << " pathB.size=" << pathB.size() << std::endl;
-                std::cerr << "pathB contents: ";
-                for (auto&p : pathB) std::cerr << "(" << p.first << "," << p.second << ") ";
-                std::cerr << std::endl;
-#endif
 
-                // treeAがstart側かgoal側かによって連結順を決める。
+                // start→...→goalの順になるよう、それぞれの根がどちらかに
+                // 応じて反転するかどうかを決める。
                 std::vector<std::pair<double, double>> fullPath;
                 if (!swapped) {
-                    // treeA=start側、treeB=goal側
-                    // pathA: start→接続点(treeA側) , pathB: 接続点(treeB側)→goal
+                    // treeA=start側（root=start）、treeB=goal側（root=goal）
+                    // pathA: newIndexA→...→start なので反転してstart→newIndexAに、
+                    // pathB: newIndexB→...→goal はそのまま末尾に連結する。
+                    std::reverse(pathA.begin(), pathA.end());
                     fullPath = pathA;
                     fullPath.insert(fullPath.end(), pathB.begin(), pathB.end());
                 } else {
-                    // treeA=goal側、treeB=start側
-                    // pathB: 接続点(treeB側)→start なので反転してstart→接続点に、
-                    // pathA: 接続点(treeA側)→goal はそのまま末尾に連結する。
+                    // treeA=goal側（root=goal）、treeB=start側（root=start）
+                    // pathB: newIndexB→...→start なので反転してstart→newIndexBに、
+                    // pathA: newIndexA→...→goal はそのまま末尾に連結する。
                     std::reverse(pathB.begin(), pathB.end());
                     fullPath = pathB;
                     fullPath.insert(fullPath.end(), pathA.begin(), pathA.end());
