@@ -1,0 +1,8 @@
+# graph_cli用のサンプル設定ファイル（BFS/DFS）。
+# 使い方: graph_cli bfs cli/configs/graph_example.yaml
+start: 0
+adjacency:
+  - [1, 2]
+  - [0, 3]
+  - [0, 3]
+  - [1, 2]
