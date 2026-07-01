@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libyaml-cpp-dev
       - name: Build
         run: |
           mkdir build
@@ -30,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run pytest
-        run: pytest sorting/ -v
+        run: pytest sorting/ searching/ cli/ -v
 
   matlab:
     runs-on: ubuntu-latest
@@ -43,7 +47,7 @@ jobs:
       - name: Run MATLAB/Octave tests
         run: |
           set -e
-          for dir in sorting/*/matlab; do
+          for dir in sorting/*/matlab searching/*/matlab; do
             algo=$(basename "$(dirname "$dir")")
             echo "::group::${algo}"
             (cd "$dir" && octave --no-gui --eval "test_${algo}")
