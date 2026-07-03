@@ -145,3 +145,35 @@ set_tests_properties(rrt_cli_smoke_rrt_star PROPERTIES PASS_REGULAR_EXPRESSION "
 add_test(NAME rrt_cli_smoke_missing_file
          COMMAND rrt_cli rrt ${CMAKE_CURRENT_SOURCE_DIR}/cli/configs/does_not_exist.yaml)
 set_tests_properties(rrt_cli_smoke_missing_file PROPERTIES WILL_FAIL TRUE)
+
+# ── データ構造（20種） ──────────────────────────────────────────────────────────
+
+# 線形データ構造（7種）
+add_subdirectory(data_structures/stack/cpp ds_stack)
+add_subdirectory(data_structures/queue/cpp ds_queue)
+add_subdirectory(data_structures/deque/cpp ds_deque)
+add_subdirectory(data_structures/singly_linked_list/cpp ds_singly_linked_list)
+add_subdirectory(data_structures/doubly_linked_list/cpp ds_doubly_linked_list)
+add_subdirectory(data_structures/circular_buffer/cpp ds_circular_buffer)
+add_subdirectory(data_structures/dynamic_array/cpp ds_dynamic_array)
+
+# 木構造（6種）
+add_subdirectory(data_structures/binary_search_tree/cpp ds_binary_search_tree)
+add_subdirectory(data_structures/avl_tree/cpp ds_avl_tree)
+add_subdirectory(data_structures/binary_heap/cpp ds_binary_heap)
+add_subdirectory(data_structures/trie/cpp ds_trie)
+add_subdirectory(data_structures/segment_tree/cpp ds_segment_tree)
+add_subdirectory(data_structures/fenwick_tree/cpp ds_fenwick_tree)
+
+# ハッシュ系（2種）
+add_subdirectory(data_structures/hash_map/cpp ds_hash_map)
+add_subdirectory(data_structures/hash_set/cpp ds_hash_set)
+
+# グラフ表現（3種）
+add_subdirectory(data_structures/adjacency_list_graph/cpp ds_adjacency_list_graph)
+add_subdirectory(data_structures/adjacency_matrix_graph/cpp ds_adjacency_matrix_graph)
+add_subdirectory(data_structures/union_find/cpp ds_union_find)
+
+# 応用・確率的（2種）
+add_subdirectory(data_structures/bloom_filter/cpp ds_bloom_filter)
+add_subdirectory(data_structures/skip_list/cpp ds_skip_list)
