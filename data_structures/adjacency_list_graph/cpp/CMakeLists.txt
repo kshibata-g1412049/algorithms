@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.10)
+project(adjacency_list_graph_cpp CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(adjacency_list_graph adjacency_list_graph.cpp)
+target_include_directories(adjacency_list_graph PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+enable_testing()
+add_executable(test_adjacency_list_graph test_adjacency_list_graph.cpp)
+target_link_libraries(test_adjacency_list_graph PRIVATE adjacency_list_graph)
+add_test(NAME adjacency_list_graph_test COMMAND test_adjacency_list_graph)

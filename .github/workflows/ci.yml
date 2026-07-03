@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run pytest
-        run: pytest sorting/ searching/ cli/ -v
+        run: pytest sorting/ searching/ data_structures/ cli/ -v
 
   matlab:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
       - name: Run MATLAB/Octave tests
         run: |
           set -e
-          for dir in sorting/*/matlab searching/*/matlab; do
+          for dir in sorting/*/matlab searching/*/matlab data_structures/*/matlab; do
             algo=$(basename "$(dirname "$dir")")
             echo "::group::${algo}"
             (cd "$dir" && octave --no-gui --eval "test_${algo}")
