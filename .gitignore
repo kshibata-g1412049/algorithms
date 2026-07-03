@@ -39,3 +39,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.egg-info/
+
+# Octave
+octave-workspace
