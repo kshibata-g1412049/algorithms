@@ -13,7 +13,12 @@
 """
 
 
-class DynamicArray:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class DynamicArray(Generic[T]):
     def __init__(self) -> None:
         self._buf = [None] * 4
         self._size = 0
@@ -28,21 +33,21 @@ class DynamicArray:
         if index < 0 or index >= self._size:
             raise IndexError("index out of range")
 
-    def append(self, value: int) -> None:
+    def append(self, value: T) -> None:
         if self._size == len(self._buf):
             self._grow()
         self._buf[self._size] = value
         self._size += 1
 
-    def get(self, index: int) -> int:
+    def get(self, index: int) -> T:
         self._check(index)
         return self._buf[index]
 
-    def set(self, index: int, value: int) -> None:
+    def set(self, index: int, value: T) -> None:
         self._check(index)
         self._buf[index] = value
 
-    def insert(self, index: int, value: int) -> None:
+    def insert(self, index: int, value: T) -> None:
         if index < 0 or index > self._size:
             raise IndexError("index out of range")
         if self._size == len(self._buf):

@@ -12,16 +12,21 @@
 from typing import List, Optional
 
 
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
 class _Node:
     __slots__ = ("val", "prev", "next")
 
-    def __init__(self, val: int) -> None:
+    def __init__(self, val: T) -> None:
         self.val = val
         self.prev: Optional["_Node"] = None
         self.next: Optional["_Node"] = None
 
 
-class DoublyLinkedList:
+class DoublyLinkedList(Generic[T]):
     def __init__(self) -> None:
         self._head: Optional[_Node] = None
         self._tail: Optional[_Node] = None
@@ -38,7 +43,7 @@ class DoublyLinkedList:
             self._tail = node.prev
         self._size -= 1
 
-    def push_front(self, value: int) -> None:
+    def push_front(self, value: T) -> None:
         node = _Node(value)
         node.next = self._head
         if self._head:
@@ -48,7 +53,7 @@ class DoublyLinkedList:
         self._head = node
         self._size += 1
 
-    def push_back(self, value: int) -> None:
+    def push_back(self, value: T) -> None:
         node = _Node(value)
         node.prev = self._tail
         if self._tail:
@@ -58,31 +63,31 @@ class DoublyLinkedList:
         self._tail = node
         self._size += 1
 
-    def pop_front(self) -> int:
+    def pop_front(self) -> T:
         if self._head is None:
             raise IndexError("list is empty")
         v = self._head.val
         self._unlink(self._head)
         return v
 
-    def pop_back(self) -> int:
+    def pop_back(self) -> T:
         if self._tail is None:
             raise IndexError("list is empty")
         v = self._tail.val
         self._unlink(self._tail)
         return v
 
-    def front(self) -> int:
+    def front(self) -> T:
         if self._head is None:
             raise IndexError("list is empty")
         return self._head.val
 
-    def back(self) -> int:
+    def back(self) -> T:
         if self._tail is None:
             raise IndexError("list is empty")
         return self._tail.val
 
-    def contains(self, value: int) -> bool:
+    def contains(self, value: T) -> bool:
         cur = self._head
         while cur:
             if cur.val == value:
@@ -90,7 +95,7 @@ class DoublyLinkedList:
             cur = cur.next
         return False
 
-    def remove(self, value: int) -> bool:
+    def remove(self, value: T) -> bool:
         cur = self._head
         while cur:
             if cur.val == value:
@@ -105,7 +110,7 @@ class DoublyLinkedList:
     def is_empty(self) -> bool:
         return self._size == 0
 
-    def to_list(self) -> List[int]:
+    def to_list(self) -> List[T]:
         result = []
         cur = self._head
         while cur:

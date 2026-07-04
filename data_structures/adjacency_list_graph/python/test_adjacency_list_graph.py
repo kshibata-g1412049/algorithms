@@ -36,3 +36,12 @@ def test_bad_vertex_raises():
     g = AdjacencyListGraph()
     with pytest.raises(KeyError):
         g.get_neighbors(99)
+
+
+def test_string_vertices():
+    g = AdjacencyListGraph()
+    g.add_edge("tokyo", "osaka")
+    g.add_edge("tokyo", "nagoya")
+    assert g.has_edge("tokyo", "osaka")
+    assert g.vertex_count() == 3
+    assert len(g.get_neighbors("tokyo")) == 2

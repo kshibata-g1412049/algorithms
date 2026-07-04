@@ -12,10 +12,15 @@
 from typing import List, Optional
 
 
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
 class _Node:
     __slots__ = ("val", "ht", "left", "right")
 
-    def __init__(self, val: int) -> None:
+    def __init__(self, val: T) -> None:
         self.val = val
         self.ht = 1
         self.left: Optional["_Node"] = None
@@ -66,12 +71,12 @@ def _balance(n: _Node) -> _Node:
     return n
 
 
-class AvlTree:
+class AvlTree(Generic[T]):
     def __init__(self) -> None:
         self._root: Optional[_Node] = None
         self._size = 0
 
-    def insert(self, value: int) -> None:
+    def insert(self, value: T) -> None:
         inserted = [False]
 
         def _insert(node: Optional[_Node]) -> _Node:
@@ -88,7 +93,7 @@ class AvlTree:
         if inserted[0]:
             self._size += 1
 
-    def remove(self, value: int) -> bool:
+    def remove(self, value: T) -> bool:
         removed = [False]
 
         def _min_node(node: _Node) -> _Node:
@@ -120,7 +125,7 @@ class AvlTree:
             self._size -= 1
         return removed[0]
 
-    def search(self, value: int) -> bool:
+    def search(self, value: T) -> bool:
         node = self._root
         while node:
             if value == node.val:
@@ -128,7 +133,7 @@ class AvlTree:
             node = node.left if value < node.val else node.right
         return False
 
-    def min(self) -> int:
+    def min(self) -> T:
         if self._root is None:
             raise IndexError("tree is empty")
         node = self._root
@@ -136,7 +141,7 @@ class AvlTree:
             node = node.left
         return node.val
 
-    def max(self) -> int:
+    def max(self) -> T:
         if self._root is None:
             raise IndexError("tree is empty")
         node = self._root
@@ -153,8 +158,8 @@ class AvlTree:
     def is_empty(self) -> bool:
         return self._size == 0
 
-    def inorder(self) -> List[int]:
-        result: List[int] = []
+    def inorder(self) -> List[T]:
+        result: List[T] = []
 
         def _visit(node: Optional[_Node]) -> None:
             if node is None:

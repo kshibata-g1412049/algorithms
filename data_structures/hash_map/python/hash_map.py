@@ -13,16 +13,22 @@
 from typing import List, Optional, Tuple
 
 
-class HashMap:
+from typing import Generic, TypeVar
+
+K = TypeVar("K")
+V = TypeVar("V")
+
+
+class HashMap(Generic[K, V]):
     _LOAD_FACTOR = 0.75
 
     def __init__(self) -> None:
         self._capacity = 16
-        self._buckets: List[List[Tuple[int, int]]] = [[] for _ in range(self._capacity)]
+        self._buckets: List[List[Tuple[K, V]]] = [[] for _ in range(self._capacity)]
         self._size = 0
 
-    def _idx(self, key: int) -> int:
-        return (key * 2654435761) % self._capacity
+    def _idx(self, key: K) -> int:
+        return (hash(key) * 2654435761) % self._capacity
 
     def _rehash(self) -> None:
         old = self._buckets
@@ -33,7 +39,7 @@ class HashMap:
             for k, v in chain:
                 self.insert(k, v)
 
-    def insert(self, key: int, value: int) -> None:
+    def insert(self, key: K, value: V) -> None:
         idx = self._idx(key)
         for i, (k, _) in enumerate(self._buckets[idx]):
             if k == key:
@@ -44,14 +50,14 @@ class HashMap:
         if self._size / self._capacity > self._LOAD_FACTOR:
             self._rehash()
 
-    def get(self, key: int) -> int:
+    def get(self, key: K) -> V:
         idx = self._idx(key)
         for k, v in self._buckets[idx]:
             if k == key:
                 return v
         raise KeyError(key)
 
-    def remove(self, key: int) -> bool:
+    def remove(self, key: K) -> bool:
         idx = self._idx(key)
         for i, (k, _) in enumerate(self._buckets[idx]):
             if k == key:
@@ -60,7 +66,7 @@ class HashMap:
                 return True
         return False
 
-    def contains(self, key: int) -> bool:
+    def contains(self, key: K) -> bool:
         idx = self._idx(key)
         return any(k == key for k, _ in self._buckets[idx])
 

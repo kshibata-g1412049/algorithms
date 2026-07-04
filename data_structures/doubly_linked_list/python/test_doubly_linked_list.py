@@ -74,3 +74,14 @@ def test_front_empty_raises():
 def test_pop_back_empty_raises():
     with pytest.raises(IndexError):
         DoublyLinkedList().pop_back()
+
+
+def test_string_elements():
+    l = DoublyLinkedList()
+    l.push_back("a")
+    l.push_back("b")
+    l.push_front("z")
+    assert l.front() == "z"
+    assert l.back() == "b"
+    assert l.remove("a")
+    assert l.size() == 2

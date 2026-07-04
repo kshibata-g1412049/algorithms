@@ -14,3 +14,11 @@ def test_false_positives_in_tiny_filter():
         bf.insert(i)
     fp = sum(1 for i in range(1000, 1100) if bf.contains(i))
     assert fp > 0
+
+
+def test_string_elements_no_false_negative():
+    bf = BloomFilter(1024, 3)
+    bf.insert("hello")
+    bf.insert("world")
+    assert bf.contains("hello")
+    assert bf.contains("world")

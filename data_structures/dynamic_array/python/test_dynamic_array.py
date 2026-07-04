@@ -53,3 +53,11 @@ def test_large_append():
     assert a.size() == 100
     assert a.get(50) == 50
     assert a.capacity() >= 100
+
+
+def test_string_elements():
+    a = DynamicArray()
+    a.append("x")
+    a.append("z")
+    a.insert(1, "y")
+    assert [a.get(i) for i in range(3)] == ["x", "y", "z"]

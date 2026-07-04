@@ -12,19 +12,24 @@
 from typing import List
 
 
-class FenwickTree:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class FenwickTree(Generic[T]):
     def __init__(self, n_or_data) -> None:
         if isinstance(n_or_data, int):
             self._n = n_or_data
             self._tree = [0] * (self._n + 1)
         else:
-            data: List[int] = n_or_data
+            data: List[T] = n_or_data
             self._n = len(data)
             self._tree = [0] * (self._n + 1)
             for i, v in enumerate(data):
                 self.update(i, v)
 
-    def update(self, i: int, delta: int) -> None:
+    def update(self, i: int, delta: T) -> None:
         if i < 0 or i >= self._n:
             raise IndexError("index out of range")
         i += 1
@@ -32,7 +37,7 @@ class FenwickTree:
             self._tree[i] += delta
             i += i & (-i)
 
-    def prefix_sum(self, i: int) -> int:
+    def prefix_sum(self, i: int) -> T:
         if i < 0 or i > self._n:
             raise IndexError("index out of range")
         s = 0
@@ -41,7 +46,7 @@ class FenwickTree:
             i -= i & (-i)
         return s
 
-    def range_sum(self, l: int, r: int) -> int:
+    def range_sum(self, l: int, r: int) -> T:
         if l < 0 or r > self._n or l > r:
             raise IndexError("invalid range")
         return self.prefix_sum(r) - self.prefix_sum(l)

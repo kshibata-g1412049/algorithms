@@ -48,3 +48,14 @@ def test_100_elements():
     for i in range(100):
         m.insert(i, i * 2)
     assert all(m.get(i) == i * 2 for i in range(100))
+
+
+def test_string_keys_and_values():
+    m = HashMap()
+    m.insert("apple", "red")
+    m.insert("banana", "yellow")
+    assert m.get("apple") == "red"
+    assert m.contains("banana")
+    assert not m.contains("cherry")
+    assert m.remove("apple")
+    assert m.size() == 1

@@ -14,25 +14,30 @@ from enum import Enum, auto
 from typing import List, Optional
 
 
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
 class _State(Enum):
     EMPTY = auto()
     USED = auto()
     DELETED = auto()
 
 
-class HashSet:
+class HashSet(Generic[T]):
     _LOAD_FACTOR = 0.5
 
     def __init__(self) -> None:
         self._capacity = 16
-        self._table: List[Optional[int]] = [None] * self._capacity
+        self._table: List[Optional[T]] = [None] * self._capacity
         self._state: List[_State] = [_State.EMPTY] * self._capacity
         self._size = 0
 
-    def _idx(self, value: int) -> int:
-        return (value * 2654435761) % self._capacity
+    def _idx(self, value: T) -> int:
+        return (hash(value) * 2654435761) % self._capacity
 
-    def _probe(self, value: int) -> int:
+    def _probe(self, value: T) -> int:
         i = self._idx(value)
         while (self._state[i] == _State.USED and self._table[i] != value):
             i = (i + 1) % self._capacity
@@ -49,7 +54,7 @@ class HashSet:
             if s == _State.USED:
                 self.insert(v)
 
-    def insert(self, value: int) -> None:
+    def insert(self, value: T) -> None:
         if (self._size + 1) / self._capacity > self._LOAD_FACTOR:
             self._rehash()
         i = self._probe(value)
@@ -58,11 +63,11 @@ class HashSet:
             self._state[i] = _State.USED
             self._size += 1
 
-    def contains(self, value: int) -> bool:
+    def contains(self, value: T) -> bool:
         i = self._probe(value)
         return self._state[i] == _State.USED and self._table[i] == value
 
-    def remove(self, value: int) -> bool:
+    def remove(self, value: T) -> bool:
         i = self._probe(value)
         if self._state[i] != _State.USED or self._table[i] != value:
             return False

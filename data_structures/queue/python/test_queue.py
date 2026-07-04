@@ -44,3 +44,11 @@ def test_large_queue():
     for i in range(100):
         assert q.dequeue() == i
     assert q.is_empty()
+
+
+def test_string_elements():
+    q = Queue()
+    q.enqueue("first")
+    q.enqueue("second")
+    assert q.dequeue() == "first"
+    assert q.dequeue() == "second"

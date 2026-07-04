@@ -1,7 +1,10 @@
 #ifndef FENWICK_TREE_H
 #define FENWICK_TREE_H
 
-// フェニック木 (Binary Indexed Tree)
+// フェニック木 (Binary Indexed Tree)（テンプレート版）
+//
+// 値型 T を汎用化（既定 long long）。int / long long / double などの
+// 加算可能な数値型を想定する。T{} がゼロ元として機能すること。
 //
 // 操作:
 //   update(i, delta) : i番目（0始まり）に delta を加算  O(log n)
@@ -14,19 +17,39 @@
 #include <stdexcept>
 #include <vector>
 
+template <typename T = long long>
 class FenwickTree {
 public:
-    explicit FenwickTree(int n);
-    explicit FenwickTree(const std::vector<int>& data);
+    explicit FenwickTree(int n) : n_(n), tree_(n + 1, T{}) {}
 
-    void update(int i, int delta);
-    long long prefix_sum(int i) const;
-    long long range_sum(int l, int r) const;
-    int size() const;
+    explicit FenwickTree(const std::vector<T>& data)
+        : n_(static_cast<int>(data.size())), tree_(data.size() + 1, T{}) {
+        for (int i = 0; i < n_; ++i) update(i, data[i]);
+    }
+
+    void update(int i, const T& delta) {
+        if (i < 0 || i >= n_) throw std::out_of_range("index out of range");
+        for (++i; i <= n_; i += i & (-i))
+            tree_[i] += delta;
+    }
+
+    T prefix_sum(int i) const {
+        if (i < 0 || i > n_) throw std::out_of_range("index out of range");
+        T s{};
+        for (; i > 0; i -= i & (-i)) s += tree_[i];
+        return s;
+    }
+
+    T range_sum(int l, int r) const {
+        if (l < 0 || r > n_ || l > r) throw std::out_of_range("invalid range");
+        return prefix_sum(r) - prefix_sum(l);
+    }
+
+    int size() const { return n_; }
 
 private:
     int n_;
-    std::vector<long long> tree_;
+    std::vector<T> tree_;
 };
 
 #endif // FENWICK_TREE_H

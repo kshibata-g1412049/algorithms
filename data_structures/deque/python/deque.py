@@ -12,32 +12,37 @@
 from collections import deque as _deque
 
 
-class Deque:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class Deque(Generic[T]):
     def __init__(self) -> None:
         self._data: _deque = _deque()
 
-    def push_front(self, value: int) -> None:
+    def push_front(self, value: T) -> None:
         self._data.appendleft(value)
 
-    def push_back(self, value: int) -> None:
+    def push_back(self, value: T) -> None:
         self._data.append(value)
 
-    def pop_front(self) -> int:
+    def pop_front(self) -> T:
         if not self._data:
             raise IndexError("deque is empty")
         return self._data.popleft()
 
-    def pop_back(self) -> int:
+    def pop_back(self) -> T:
         if not self._data:
             raise IndexError("deque is empty")
         return self._data.pop()
 
-    def peek_front(self) -> int:
+    def peek_front(self) -> T:
         if not self._data:
             raise IndexError("deque is empty")
         return self._data[0]
 
-    def peek_back(self) -> int:
+    def peek_back(self) -> T:
         if not self._data:
             raise IndexError("deque is empty")
         return self._data[-1]

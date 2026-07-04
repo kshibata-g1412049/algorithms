@@ -12,9 +12,14 @@
 from typing import List
 
 
-class BinaryHeap:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class BinaryHeap(Generic[T]):
     def __init__(self) -> None:
-        self._data: List[int] = []
+        self._data: List[T] = []
 
     def _sift_up(self, i: int) -> None:
         while i > 0:
@@ -38,16 +43,16 @@ class BinaryHeap:
             self._data[i], self._data[smallest] = self._data[smallest], self._data[i]
             i = smallest
 
-    def insert(self, value: int) -> None:
+    def insert(self, value: T) -> None:
         self._data.append(value)
         self._sift_up(len(self._data) - 1)
 
-    def find_min(self) -> int:
+    def find_min(self) -> T:
         if not self._data:
             raise IndexError("heap is empty")
         return self._data[0]
 
-    def extract_min(self) -> int:
+    def extract_min(self) -> T:
         if not self._data:
             raise IndexError("heap is empty")
         v = self._data[0]

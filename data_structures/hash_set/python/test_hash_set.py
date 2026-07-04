@@ -41,3 +41,15 @@ def test_100_elements():
     for i in range(100):
         s.insert(i)
     assert all(s.contains(i) for i in range(100))
+
+
+def test_string_elements():
+    s = HashSet()
+    s.insert("alpha")
+    s.insert("beta")
+    s.insert("alpha")
+    assert s.size() == 2
+    assert s.contains("beta")
+    assert not s.contains("gamma")
+    assert s.remove("alpha")
+    assert not s.contains("alpha")

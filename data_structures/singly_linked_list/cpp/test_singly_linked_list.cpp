@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <string>
 
 namespace {
 bool allPassed = true;
@@ -16,17 +17,17 @@ void check(const std::string& n, bool c, const std::string& d = "assertion faile
 } // namespace
 
 int main() {
-    { SinglyLinkedList l; check("new is empty", l.is_empty()); }
+    { SinglyLinkedList<int> l; check("new is empty", l.is_empty()); }
 
     {
-        SinglyLinkedList l;
+        SinglyLinkedList<int> l;
         l.push_front(3); l.push_front(2); l.push_front(1);
         auto v = l.to_vector();
         check("push_front order", v == std::vector<int>{1, 2, 3});
     }
 
     {
-        SinglyLinkedList l;
+        SinglyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         auto v = l.to_vector();
         check("push_back order", v == std::vector<int>{1, 2, 3});
@@ -35,7 +36,7 @@ int main() {
     }
 
     {
-        SinglyLinkedList l;
+        SinglyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("pop_front", l.pop_front() == 1);
         check("front after pop", l.front() == 2);
@@ -43,14 +44,14 @@ int main() {
     }
 
     {
-        SinglyLinkedList l;
+        SinglyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("contains 2", l.contains(2));
         check("not contains 5", !l.contains(5));
     }
 
     {
-        SinglyLinkedList l;
+        SinglyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("remove middle", l.remove(2));
         auto v = l.to_vector();
@@ -59,9 +60,17 @@ int main() {
     }
 
     {
-        SinglyLinkedList l;
+        SinglyLinkedList<int> l;
         try { l.front(); fail("front empty", "no exception"); }
         catch (const std::underflow_error&) { pass("front empty throws"); }
+    }
+
+    // --- 非int型（テンプレート動作確認） ---
+    {
+        SinglyLinkedList<std::string> l;
+        l.push_back("a"); l.push_back("b");
+        check("string contains", l.contains("b"));
+        check("string remove", l.remove("a") && l.front() == "b");
     }
 
     return allPassed ? EXIT_SUCCESS : EXIT_FAILURE;

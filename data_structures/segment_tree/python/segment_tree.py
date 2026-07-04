@@ -12,14 +12,19 @@
 from typing import List
 
 
-class SegmentTree:
-    def __init__(self, data: List[int]) -> None:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class SegmentTree(Generic[T]):
+    def __init__(self, data: List[T]) -> None:
         self._n = len(data)
         self._tree = [0] * (4 * self._n)
         if self._n > 0:
             self._build(data, 1, 0, self._n - 1)
 
-    def _build(self, data: List[int], node: int, lo: int, hi: int) -> None:
+    def _build(self, data: List[T], node: int, lo: int, hi: int) -> None:
         if lo == hi:
             self._tree[node] = data[lo]
             return
@@ -28,7 +33,7 @@ class SegmentTree:
         self._build(data, 2 * node + 1, mid + 1, hi)
         self._tree[node] = self._tree[2 * node] + self._tree[2 * node + 1]
 
-    def _update(self, node: int, lo: int, hi: int, i: int, value: int) -> None:
+    def _update(self, node: int, lo: int, hi: int, i: int, value: T) -> None:
         if lo == hi:
             self._tree[node] = value
             return
@@ -39,12 +44,12 @@ class SegmentTree:
             self._update(2 * node + 1, mid + 1, hi, i, value)
         self._tree[node] = self._tree[2 * node] + self._tree[2 * node + 1]
 
-    def update(self, i: int, value: int) -> None:
+    def update(self, i: int, value: T) -> None:
         if i < 0 or i >= self._n:
             raise IndexError("index out of range")
         self._update(1, 0, self._n - 1, i, value)
 
-    def _query(self, node: int, lo: int, hi: int, l: int, r: int) -> int:
+    def _query(self, node: int, lo: int, hi: int, l: int, r: int) -> T:
         if r < lo or hi < l:
             return 0
         if l <= lo and hi <= r:
@@ -53,7 +58,7 @@ class SegmentTree:
         return (self._query(2 * node, lo, mid, l, r) +
                 self._query(2 * node + 1, mid + 1, hi, l, r))
 
-    def query(self, l: int, r: int) -> int:
+    def query(self, l: int, r: int) -> T:
         if l < 0 or r > self._n or l >= r:
             raise IndexError("invalid range")
         return self._query(1, 0, self._n - 1, l, r - 1)

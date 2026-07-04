@@ -1,6 +1,7 @@
 #include "skip_list.h"
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 namespace {
 bool allPassed = true;
@@ -14,10 +15,10 @@ void check(const std::string& n, bool c, const std::string& d = "assertion faile
 } // namespace
 
 int main() {
-    { SkipList sl; check("new is empty", sl.is_empty()); }
+    { SkipList<int> sl; check("new is empty", sl.is_empty()); }
 
     {
-        SkipList sl(42);
+        SkipList<int> sl(42);
         sl.insert(3); sl.insert(1); sl.insert(4); sl.insert(1); sl.insert(5);
         check("search 3",    sl.search(3));
         check("search 5",    sl.search(5));
@@ -26,7 +27,7 @@ int main() {
     }
 
     {
-        SkipList sl(42);
+        SkipList<int> sl(42);
         sl.insert(3); sl.insert(1); sl.insert(4); sl.insert(5);
         check("remove 3",    sl.remove(3));
         check("no 3 after",  !sl.search(3));
@@ -36,7 +37,7 @@ int main() {
     }
 
     {
-        SkipList sl(7);
+        SkipList<int> sl(7);
         for (int i = 1; i <= 100; ++i) sl.insert(i);
         bool ok = true;
         for (int i = 1; i <= 100; ++i) ok = ok && sl.search(i);
@@ -45,6 +46,15 @@ int main() {
         bool removed_ok = true;
         for (int i = 1; i <= 50; ++i) removed_ok = removed_ok && !sl.search(i);
         check("50 removes",  removed_ok);
+    }
+
+    // --- 非int型（テンプレート動作確認） ---
+    {
+        SkipList<std::string> sl(42);
+        sl.insert("banana"); sl.insert("apple"); sl.insert("cherry");
+        check("string search", sl.search("apple") && !sl.search("durian"));
+        check("string remove", sl.remove("banana") && !sl.search("banana"));
+        check("string size", sl.size() == 2);
     }
 
     return allPassed ? EXIT_SUCCESS : EXIT_FAILURE;

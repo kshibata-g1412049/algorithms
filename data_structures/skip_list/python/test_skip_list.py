@@ -42,3 +42,13 @@ def test_100_elements():
         sl.remove(i)
     assert not any(sl.search(i) for i in range(1, 51))
     assert all(sl.search(i) for i in range(51, 101))
+
+
+def test_string_elements():
+    sl = SkipList(seed=42)
+    for w in ["banana", "apple", "cherry"]:
+        sl.insert(w)
+    assert sl.search("apple")
+    assert not sl.search("durian")
+    assert sl.remove("banana")
+    assert sl.size() == 2

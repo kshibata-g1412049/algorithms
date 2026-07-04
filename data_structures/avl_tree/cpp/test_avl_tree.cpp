@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <string>
 
 namespace {
 bool allPassed = true;
@@ -16,10 +17,10 @@ void check(const std::string& n, bool c, const std::string& d = "assertion faile
 } // namespace
 
 int main() {
-    { AvlTree t; check("new is empty", t.is_empty()); }
+    { AvlTree<int> t; check("new is empty", t.is_empty()); }
 
     {
-        AvlTree t;
+        AvlTree<int> t;
         for (int v : {5, 3, 7, 1, 4}) t.insert(v);
         check("search 3",    t.search(3));
         check("no search 6", !t.search(6));
@@ -28,7 +29,7 @@ int main() {
     }
 
     {
-        AvlTree t;
+        AvlTree<int> t;
         for (int v : {5, 3, 7}) t.insert(v);
         check("min", t.min() == 3);
         check("max", t.max() == 7);
@@ -36,7 +37,7 @@ int main() {
 
     {
         // Ascending insert would degenerate BST but AVL keeps height O(log n)
-        AvlTree t;
+        AvlTree<int> t;
         for (int i = 1; i <= 100; ++i) t.insert(i);
         int h = t.height();
         int expected = static_cast<int>(std::ceil(1.44 * std::log2(101)));
@@ -48,7 +49,7 @@ int main() {
     }
 
     {
-        AvlTree t;
+        AvlTree<int> t;
         for (int v : {5, 3, 7, 1, 4}) t.insert(v);
         check("remove leaf",   t.remove(1));
         check("remove middle", t.remove(3));
@@ -58,9 +59,18 @@ int main() {
     }
 
     {
-        AvlTree t;
+        AvlTree<int> t;
         try { t.min(); fail("min empty", "no exception"); }
         catch (const std::underflow_error&) { pass("min empty throws"); }
+    }
+
+    // --- 非int型（テンプレート動作確認） ---
+    {
+        AvlTree<std::string> t;
+        t.insert("banana"); t.insert("apple"); t.insert("cherry"); t.insert("date");
+        check("string search", t.search("cherry"));
+        check("string min/max", t.min() == "apple" && t.max() == "date");
+        check("string remove", t.remove("banana") && t.size() == 3);
     }
 
     return allPassed ? EXIT_SUCCESS : EXIT_FAILURE;

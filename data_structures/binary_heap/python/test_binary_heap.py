@@ -45,3 +45,11 @@ def test_find_min_empty_raises():
 def test_extract_min_empty_raises():
     with pytest.raises(IndexError):
         BinaryHeap().extract_min()
+
+
+def test_string_elements():
+    h = BinaryHeap()
+    h.insert("pear")
+    h.insert("apple")
+    h.insert("mango")
+    assert h.extract_min() == "apple"

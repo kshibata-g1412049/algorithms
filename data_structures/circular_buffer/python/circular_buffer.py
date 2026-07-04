@@ -8,7 +8,12 @@
 """
 
 
-class CircularBuffer:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class CircularBuffer(Generic[T]):
     def __init__(self, capacity: int) -> None:
         if capacity <= 0:
             raise ValueError("capacity must be positive")
@@ -17,14 +22,14 @@ class CircularBuffer:
         self._count = 0
         self._cap = capacity
 
-    def push(self, value: int) -> None:
+    def push(self, value: T) -> None:
         if self._count == self._cap:
             raise OverflowError("circular buffer is full")
         tail = (self._head + self._count) % self._cap
         self._buf[tail] = value
         self._count += 1
 
-    def pop(self) -> int:
+    def pop(self) -> T:
         if self._count == 0:
             raise IndexError("circular buffer is empty")
         v = self._buf[self._head]
@@ -32,7 +37,7 @@ class CircularBuffer:
         self._count -= 1
         return v
 
-    def peek(self) -> int:
+    def peek(self) -> T:
         if self._count == 0:
             raise IndexError("circular buffer is empty")
         return self._buf[self._head]

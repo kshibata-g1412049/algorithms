@@ -56,3 +56,14 @@ def test_remove():
 def test_min_empty_raises():
     with pytest.raises(IndexError):
         AvlTree().min()
+
+
+def test_string_elements():
+    t = AvlTree()
+    for w in ["banana", "apple", "cherry", "date"]:
+        t.insert(w)
+    assert t.search("cherry")
+    assert t.min() == "apple"
+    assert t.max() == "date"
+    assert t.remove("banana")
+    assert t.size() == 3

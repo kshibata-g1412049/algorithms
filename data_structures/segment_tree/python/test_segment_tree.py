@@ -34,3 +34,10 @@ def test_bad_index_raises():
         st.update(5, 0)
     with pytest.raises(IndexError):
         st.query(2, 1)
+
+
+def test_float_elements():
+    st = SegmentTree([0.5, 1.5, 2.0])
+    assert st.query(0, 3) == 4.0
+    st.update(1, 2.5)
+    assert st.query(0, 3) == 5.0

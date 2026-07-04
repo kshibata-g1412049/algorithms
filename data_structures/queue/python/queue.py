@@ -13,19 +13,24 @@
 from collections import deque
 
 
-class Queue:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class Queue(Generic[T]):
     def __init__(self) -> None:
         self._data: deque = deque()
 
-    def enqueue(self, value: int) -> None:
+    def enqueue(self, value: T) -> None:
         self._data.append(value)
 
-    def dequeue(self) -> int:
+    def dequeue(self) -> T:
         if not self._data:
             raise IndexError("queue is empty")
         return self._data.popleft()
 
-    def peek(self) -> int:
+    def peek(self) -> T:
         if not self._data:
             raise IndexError("queue is empty")
         return self._data[0]

@@ -14,26 +14,31 @@
 from typing import List, Optional
 
 
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
 class _Node:
     __slots__ = ("val", "next")
 
-    def __init__(self, val: int) -> None:
+    def __init__(self, val: T) -> None:
         self.val = val
         self.next: Optional["_Node"] = None
 
 
-class SinglyLinkedList:
+class SinglyLinkedList(Generic[T]):
     def __init__(self) -> None:
         self._head: Optional[_Node] = None
         self._size = 0
 
-    def push_front(self, value: int) -> None:
+    def push_front(self, value: T) -> None:
         node = _Node(value)
         node.next = self._head
         self._head = node
         self._size += 1
 
-    def push_back(self, value: int) -> None:
+    def push_back(self, value: T) -> None:
         node = _Node(value)
         if self._head is None:
             self._head = node
@@ -44,7 +49,7 @@ class SinglyLinkedList:
             cur.next = node
         self._size += 1
 
-    def pop_front(self) -> int:
+    def pop_front(self) -> T:
         if self._head is None:
             raise IndexError("list is empty")
         v = self._head.val
@@ -52,12 +57,12 @@ class SinglyLinkedList:
         self._size -= 1
         return v
 
-    def front(self) -> int:
+    def front(self) -> T:
         if self._head is None:
             raise IndexError("list is empty")
         return self._head.val
 
-    def back(self) -> int:
+    def back(self) -> T:
         if self._head is None:
             raise IndexError("list is empty")
         cur = self._head
@@ -65,7 +70,7 @@ class SinglyLinkedList:
             cur = cur.next
         return cur.val
 
-    def contains(self, value: int) -> bool:
+    def contains(self, value: T) -> bool:
         cur = self._head
         while cur:
             if cur.val == value:
@@ -73,7 +78,7 @@ class SinglyLinkedList:
             cur = cur.next
         return False
 
-    def remove(self, value: int) -> bool:
+    def remove(self, value: T) -> bool:
         if self._head is None:
             return False
         if self._head.val == value:
@@ -95,7 +100,7 @@ class SinglyLinkedList:
     def is_empty(self) -> bool:
         return self._size == 0
 
-    def to_list(self) -> List[int]:
+    def to_list(self) -> List[T]:
         result = []
         cur = self._head
         while cur:
