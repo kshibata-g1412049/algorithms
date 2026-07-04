@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/kshibata-g1412049/algorithms/actions/workflows/ci.yml/badge.svg)](https://github.com/kshibata-g1412049/algorithms/actions/workflows/ci.yml)
 
-代表的なソートアルゴリズム・探索アルゴリズムを C++ / Python / MATLAB の3言語で実装した学習用リファレンス集です。
+代表的なソートアルゴリズム・探索アルゴリズム・データ構造を C++ / Python / MATLAB の3言語で実装した学習用リファレンス集です。
 
 ## 対象アルゴリズム（ソート）
 
@@ -80,6 +80,107 @@ n=ノード数（最大max_iterations）。
 > 各言語のテストは固定シードによる「その言語内での再現性」と、「start起点・goal半径内終点・障害物非衝突・
 > 各ステップがstep_size以下」といった経路の性質を検証するプロパティベーステストになっています。
 
+## 対象データ構造（20種）
+
+各データ構造は C++（テンプレートクラス）・Python（`Generic` 型ヒント付きクラス）・MATLAB
+（ディスパッチ関数＋struct）で実装しています。C++/Python は**任意の型を要素にできる**汎用実装です
+（例外は後述の「int 固定の3種」）。
+
+### 線形（7種）
+
+| データ構造 | 主要操作 | 計算量 |
+| --- | --- | --- |
+| Stack（スタック） | push / pop / peek | すべて O(1) |
+| Queue（キュー） | enqueue / dequeue / peek | すべて O(1) 均し |
+| Deque（両端キュー） | push_front / push_back / pop_front / pop_back | すべて O(1) 均し |
+| Singly Linked List（単方向連結リスト） | push_front / pop_front / contains / remove | 先頭 O(1)、探索 O(n) |
+| Doubly Linked List（双方向連結リスト） | push/pop 両端 / contains / remove | 両端 O(1)、探索 O(n) |
+| Circular Buffer（循環バッファ） | push / pop / peek（固定容量） | すべて O(1) |
+| Dynamic Array（動的配列） | append / get / set / insert / remove | append O(1) 均し、insert/remove O(n) |
+
+### 木構造（6種）
+
+| データ構造 | 主要操作 | 計算量 |
+| --- | --- | --- |
+| Binary Search Tree（二分探索木） | insert / search / remove / min / max / 3走査 | 平均 O(log n)、最悪 O(n) |
+| AVL Tree（AVL木） | insert / search / remove（回転で自己平衡） | O(log n) 保証 |
+| Binary Heap（二分ヒープ・最小ヒープ） | insert / find_min / extract_min | insert/extract O(log n)、find O(1) |
+| Trie（トライ木） | insert / search / starts_with / remove | O(L)、L=文字列長 |
+| Segment Tree（セグメント木・区間和） | update / query | いずれも O(log n)、構築 O(n) |
+| Fenwick Tree（フェニック木 / BIT） | update / prefix_sum / range_sum | すべて O(log n) |
+
+### ハッシュ（2種）
+
+| データ構造 | 実装方式 | 計算量 |
+| --- | --- | --- |
+| Hash Map（ハッシュマップ） | チェイン法、ロードファクタ0.75でリハッシュ | 平均 O(1) |
+| Hash Set（ハッシュセット） | 線形探索法（tombstone削除）、ロードファクタ0.5 | 平均 O(1) |
+
+### グラフ表現（3種）
+
+| データ構造 | 主要操作 | 計算量 |
+| --- | --- | --- |
+| Adjacency List Graph（隣接リスト） | add_vertex / add_edge / get_neighbors | add O(1)、has_edge O(deg) |
+| Adjacency Matrix Graph（隣接行列） | add_edge / remove_edge / has_edge | has_edge O(1)、get_neighbors O(V) |
+| Union-Find（素集合） | find（経路圧縮）/ unite（ランク結合）/ connected | O(α(n)) ≒ O(1) 均し |
+
+### 確率的（2種）
+
+| データ構造 | 主要操作 | 特徴 |
+| --- | --- | --- |
+| Bloom Filter（ブルームフィルタ） | insert / contains | 偽陽性あり・偽陰性なし、O(k) |
+| Skip List（スキップリスト） | insert / search / remove | 平均 O(log n)。**MATLAB実装なし**（可変長前方ポインタ配列がMATLABの配列モデルと相性が悪いため） |
+
+### テンプレート／ジェネリクスの使い方
+
+C++ 実装はテンプレートクラスです。テンプレート引数で要素型・比較器・ハッシュ関数を差し替えられます。
+
+```cpp
+Stack<std::string> s;                        // 任意の要素型（int以外もOK）
+s.push("hello");
+
+BinaryHeap<int, std::greater<int>> maxheap;  // Compare を差し替えると最大ヒープになる
+maxheap.insert(10);
+maxheap.extract_min();                       // => 10（Compare上の「最小」= 数値の最大）
+
+HashMap<std::string, std::string> m;         // 任意のキー型・値型（Hash は既定で std::hash）
+m.insert("apple", "red");
+
+AdjacencyListGraph<std::string> g;           // 頂点を文字列ラベルにできる
+g.add_edge("tokyo", "osaka");
+
+std::vector<double> data = {0.5, 1.5, 2.0};
+SegmentTree<double> st(data);                // 実数の区間和（既定は long long）
+FenwickTree<double> ft(3);                   // 同上
+```
+
+- 順序付き構造（BST / AVL / Heap / Skip List）は `template<typename T, typename Compare = std::less<T>>`。
+  等価判定も比較器から導出（`!cmp(a,b) && !cmp(b,a)`）するため、`<` が定義された型ならそのまま使えます。
+- ハッシュ系（Hash Map / Hash Set / Bloom Filter / 隣接リスト）は `Hash = std::hash<...>` を既定とし、
+  独自ハッシュ関数オブジェクトを渡せます。
+- テンプレート実装はすべてヘッダ（`.h`）内にあり、`.cpp` はビルドターゲット維持用のスタブです。
+
+Python 実装は `typing.Generic` による型ヒント付きで、任意の型を実行時にそのまま格納できます。
+
+```python
+s: Stack[str] = Stack()
+s.push("hello")
+
+m: HashMap[str, str] = HashMap()
+m.insert("apple", "red")
+
+g: AdjacencyListGraph[str] = AdjacencyListGraph()
+g.add_edge("tokyo", "osaka")
+```
+
+**int 固定の3種**: `trie`（a〜z 26文字アルファベット特化が設計意図）、`adjacency_matrix_graph`
+（頂点IDが行列インデックスそのもの）、`union_find`（parent/rank 配列が整数インデックス前提）は
+汎用化の対象外です。
+
+**MATLAB**: 動的型付けのため、数値型（double / int32 等）はコード変更なしでそのまま扱えます。
+文字列を順序付き構造に入れる場合は `<` 演算子の代わりに `strcmp` ベースの比較が必要になるため
+サポート外です。
+
 ## ディレクトリ構成
 
 ```
@@ -120,6 +221,30 @@ searching/
 ├── rrt_star/             (同パターン)
 ├── rrt_connect/          (同パターン)
 └── informed_rrt_star/    (同パターン)
+data_structures/
+├── stack/
+│   ├── cpp/       # stack.h（テンプレート実装）, stack.cpp（スタブ）, test_stack.cpp, CMakeLists.txt
+│   ├── python/    # stack.py, test_stack.py
+│   └── matlab/    # stack.m, test_stack.m
+├── queue/                    (同パターン。線形7種)
+├── deque/                    (同パターン)
+├── singly_linked_list/       (同パターン)
+├── doubly_linked_list/       (同パターン)
+├── circular_buffer/          (同パターン)
+├── dynamic_array/            (同パターン)
+├── binary_search_tree/       (同パターン。木構造6種)
+├── avl_tree/                 (同パターン)
+├── binary_heap/              (同パターン)
+├── trie/                     (同パターン)
+├── segment_tree/             (同パターン)
+├── fenwick_tree/             (同パターン)
+├── hash_map/                 (同パターン。ハッシュ2種)
+├── hash_set/                 (同パターン)
+├── adjacency_list_graph/     (同パターン。グラフ3種)
+├── adjacency_matrix_graph/   (同パターン)
+├── union_find/               (同パターン)
+├── bloom_filter/             (同パターン。確率的2種)
+└── skip_list/                (cpp/pythonのみ。MATLAB実装なし)
 ```
 
 **各言語サブフォルダ（`cpp/`, `python/`, `matlab/`）は単独で取り出してもビルド・実行・テストできます。**
@@ -128,7 +253,8 @@ YAML読み込みは`cli/`層だけに閉じています）。
 
 ## ビルド・実行・テスト方法
 
-`sorting/` を `searching/` に置き換えれば同じ手順で探索アルゴリズム側も扱えます（例: `sorting/bubble_sort/cpp` → `searching/binary_search/cpp`）。
+`sorting/` を `searching/` や `data_structures/` に置き換えれば同じ手順で探索アルゴリズム・データ構造側も扱えます
+（例: `sorting/bubble_sort/cpp` → `searching/binary_search/cpp` → `data_structures/stack/cpp`）。
 
 ### C++
 
@@ -165,7 +291,7 @@ ctest --output-on-failure
 
 ```sh
 pip install -r requirements.txt
-pytest sorting/ searching/ cli/ -v
+pytest sorting/ searching/ data_structures/ cli/ -v
 ```
 
 1つのアルゴリズムのpythonフォルダだけを取り出して試す場合（例: bubble_sort, binary_search）:
@@ -187,7 +313,7 @@ test_bubble_sort
 
 全テストが成功すると `All tests passed.` と表示されます。
 
-> 本リポジトリの開発・検証環境にはMATLAB/Octaveがインストールされていないため、ローカルでの実行検証は行っていません。ただしCI（GitHub Actions）上ではOctaveをインストールして全28アルゴリズムのテストスクリプトを実際に実行し、動作を検証しています（後述の「CI」を参照）。RRT系のテストは乱数を使うため、固定シードによる再現性とプロパティベースの検証を行っています。
+> CI（GitHub Actions）上ではOctaveをインストールして全28アルゴリズム＋データ構造19種（skip_listを除く）のテストスクリプトを実際に実行し、動作を検証しています（後述の「CI」を参照）。RRT系のテストは乱数を使うため、固定シードによる再現性とプロパティベースの検証を行っています。
 
 ## CLIサンプル（実際に試す）
 
@@ -289,8 +415,8 @@ $ echo $?
 GitHub Actions（`.github/workflows/ci.yml`）で、`main` ブランチへのPull Request作成・更新時と `main` へのpush時に、以下の3ジョブを自動実行しています。
 
 - **cpp**: `apt-get install -y libyaml-cpp-dev` の後、ルートの集約ビルドで `cmake .. && make` した後 `ctest --output-on-failure`（CLI設定読み込みの単体テスト・CLIバイナリのスモークテストを含む）
-- **python**: `pip install -r requirements.txt` の後 `pytest sorting/ searching/ cli/ -v`（CLIの例外処理テストを含む）
-- **matlab**: `apt-get install octave` でOctaveを導入し、`sorting/`・`searching/`双方の全アルゴリズムの `test_*.m` を実行
+- **python**: `pip install -r requirements.txt` の後 `pytest sorting/ searching/ data_structures/ cli/ -v`（CLIの例外処理テストを含む）
+- **matlab**: `apt-get install octave` でOctaveを導入し、`sorting/`・`searching/`・`data_structures/` の全 `test_*.m` を実行
 
 ## Dockerでの再現手順
 
