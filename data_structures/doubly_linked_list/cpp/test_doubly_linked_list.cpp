@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <string>
 
 namespace {
 bool allPassed = true;
@@ -16,16 +17,16 @@ void check(const std::string& n, bool c, const std::string& d = "assertion faile
 } // namespace
 
 int main() {
-    { DoublyLinkedList l; check("new is empty", l.is_empty()); }
+    { DoublyLinkedList<int> l; check("new is empty", l.is_empty()); }
 
     {
-        DoublyLinkedList l;
+        DoublyLinkedList<int> l;
         l.push_front(3); l.push_front(2); l.push_front(1);
         check("push_front order", l.to_vector() == std::vector<int>{1, 2, 3});
     }
 
     {
-        DoublyLinkedList l;
+        DoublyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("push_back order", l.to_vector() == std::vector<int>{1, 2, 3});
         check("front", l.front() == 1);
@@ -33,7 +34,7 @@ int main() {
     }
 
     {
-        DoublyLinkedList l;
+        DoublyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("pop_front", l.pop_front() == 1);
         check("front after pop_front", l.front() == 2);
@@ -43,14 +44,14 @@ int main() {
     }
 
     {
-        DoublyLinkedList l;
+        DoublyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("contains 2",    l.contains(2));
         check("not contains 5", !l.contains(5));
     }
 
     {
-        DoublyLinkedList l;
+        DoublyLinkedList<int> l;
         l.push_back(1); l.push_back(2); l.push_back(3);
         check("remove middle", l.remove(2));
         check("after remove",  l.to_vector() == std::vector<int>{1, 3});
@@ -60,11 +61,19 @@ int main() {
     }
 
     {
-        DoublyLinkedList l;
+        DoublyLinkedList<int> l;
         try { l.front(); fail("front empty", "no exception"); }
         catch (const std::underflow_error&) { pass("front empty throws"); }
         try { l.pop_back(); fail("pop_back empty", "no exception"); }
         catch (const std::underflow_error&) { pass("pop_back empty throws"); }
+    }
+
+    // --- 非int型（テンプレート動作確認） ---
+    {
+        DoublyLinkedList<std::string> l;
+        l.push_back("a"); l.push_back("b"); l.push_front("z");
+        check("string front/back", l.front() == "z" && l.back() == "b");
+        check("string remove", l.remove("a") && l.size() == 2);
     }
 
     return allPassed ? EXIT_SUCCESS : EXIT_FAILURE;

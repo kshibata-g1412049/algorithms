@@ -1,7 +1,9 @@
 #ifndef STACK_H
 #define STACK_H
 
-// スタック（LIFO）— 動的配列バック実装
+// スタック（LIFO）— 動的配列バック実装（テンプレート版）
+//
+// 任意の型 T を要素として格納できる。
 //
 // 操作:
 //   push(v)  : 要素を積む  O(1) 均し
@@ -15,16 +17,31 @@
 #include <stdexcept>
 #include <vector>
 
+template <typename T>
 class Stack {
 public:
-    void push(int value);
-    int pop();
-    int peek() const;
-    bool is_empty() const;
-    int size() const;
+    void push(const T& value) {
+        data_.push_back(value);
+    }
+
+    T pop() {
+        if (data_.empty()) throw std::underflow_error("stack is empty");
+        T v = data_.back();
+        data_.pop_back();
+        return v;
+    }
+
+    const T& peek() const {
+        if (data_.empty()) throw std::underflow_error("stack is empty");
+        return data_.back();
+    }
+
+    bool is_empty() const { return data_.empty(); }
+
+    int size() const { return static_cast<int>(data_.size()); }
 
 private:
-    std::vector<int> data_;
+    std::vector<T> data_;
 };
 
 #endif // STACK_H

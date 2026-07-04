@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 namespace {
 bool allPassed = true;
@@ -15,11 +16,11 @@ void check(const std::string& n, bool c, const std::string& d = "assertion faile
 } // namespace
 
 int main() {
-    { Queue q; check("new is empty", q.is_empty()); }
-    { Queue q; check("new size 0", q.size() == 0); }
+    { Queue<int> q; check("new is empty", q.is_empty()); }
+    { Queue<int> q; check("new size 0", q.size() == 0); }
 
     {
-        Queue q;
+        Queue<int> q;
         q.enqueue(1); q.enqueue(2); q.enqueue(3);
         check("FIFO dequeue1", q.dequeue() == 1);
         check("FIFO dequeue2", q.dequeue() == 2);
@@ -28,20 +29,20 @@ int main() {
     }
 
     {
-        Queue q;
+        Queue<int> q;
         q.enqueue(5);
         check("peek front", q.peek() == 5);
         check("peek no remove", q.size() == 1);
     }
 
     {
-        Queue q;
+        Queue<int> q;
         try { q.dequeue(); fail("dequeue empty throws", "no exception"); }
         catch (const std::underflow_error&) { pass("dequeue empty throws"); }
     }
 
     {
-        Queue q;
+        Queue<int> q;
         for (int i = 0; i < 100; ++i) q.enqueue(i);
         check("size 100", q.size() == 100);
         for (int i = 0; i < 100; ++i)
@@ -50,12 +51,19 @@ int main() {
     }
 
     {
-        Queue q;
+        Queue<int> q;
         q.enqueue(1); q.dequeue();
         q.enqueue(2); q.dequeue();
         q.enqueue(3);
         check("wrap-around peek", q.peek() == 3);
         check("wrap-around size", q.size() == 1);
+    }
+
+    // --- 非int型（テンプレート動作確認） ---
+    {
+        Queue<std::string> q;
+        q.enqueue("first"); q.enqueue("second");
+        check("string FIFO", q.dequeue() == "first" && q.dequeue() == "second");
     }
 
     return allPassed ? EXIT_SUCCESS : EXIT_FAILURE;

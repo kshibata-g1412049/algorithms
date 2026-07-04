@@ -96,3 +96,12 @@ def test_size_tracking():
     for _ in range(5):
         ll.pop_front()
     assert ll.size() == 5
+
+
+def test_string_elements():
+    l = SinglyLinkedList()
+    l.push_back("a")
+    l.push_back("b")
+    assert l.contains("b")
+    assert l.remove("a")
+    assert l.front() == "b"

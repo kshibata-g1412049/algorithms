@@ -68,3 +68,14 @@ def test_duplicate_ignored():
 def test_min_empty_raises():
     with pytest.raises(IndexError):
         BinarySearchTree().min()
+
+
+def test_string_elements():
+    t = BinarySearchTree()
+    for w in ["banana", "apple", "cherry"]:
+        t.insert(w)
+    assert t.search("apple")
+    assert not t.search("durian")
+    assert t.min() == "apple"
+    assert t.max() == "cherry"
+    assert t.inorder() == ["apple", "banana", "cherry"]

@@ -53,3 +53,13 @@ def test_large_deque():
         d.push_front(i)
         d.push_back(100 + i)
     assert d.size() == 100
+
+
+def test_string_elements():
+    d = Deque()
+    d.push_back("mid")
+    d.push_front("front")
+    d.push_back("back")
+    assert d.pop_front() == "front"
+    assert d.pop_back() == "back"
+    assert d.pop_front() == "mid"

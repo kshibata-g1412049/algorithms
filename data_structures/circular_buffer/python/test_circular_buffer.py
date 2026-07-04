@@ -50,3 +50,11 @@ def test_pop_empty_raises():
 def test_zero_capacity_raises():
     with pytest.raises(ValueError):
         CircularBuffer(0)
+
+
+def test_string_elements():
+    b = CircularBuffer(2)
+    b.push("a")
+    b.push("b")
+    assert b.is_full()
+    assert b.pop() == "a"

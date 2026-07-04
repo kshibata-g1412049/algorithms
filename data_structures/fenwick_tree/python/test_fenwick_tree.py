@@ -34,3 +34,12 @@ def test_bad_index_raises():
         ft.update(5, 1)
     with pytest.raises(IndexError):
         ft.range_sum(2, 1)
+
+
+def test_float_elements():
+    ft = FenwickTree(3)
+    ft.update(0, 0.5)
+    ft.update(1, 1.5)
+    ft.update(2, 2.0)
+    assert ft.prefix_sum(3) == 4.0
+    assert ft.range_sum(1, 3) == 3.5

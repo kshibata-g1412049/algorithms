@@ -53,3 +53,13 @@ def test_large_push_pop():
     for i in range(99, -1, -1):
         assert s.pop() == i
     assert s.is_empty()
+
+
+def test_string_and_float_elements():
+    s = Stack()
+    s.push("hello")
+    s.push("world")
+    assert s.pop() == "world"
+    f = Stack()
+    f.push(3.14)
+    assert f.peek() == 3.14

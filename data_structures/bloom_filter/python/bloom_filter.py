@@ -8,14 +8,19 @@ k 個の独立ハッシュ関数で m ビットのビット配列を使用。
 """
 
 
-class BloomFilter:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class BloomFilter(Generic[T]):
     def __init__(self, m: int, k: int) -> None:
         self._m = m
         self._k = k
         self._bits = bytearray(m)
 
-    def _hash(self, value: int, seed: int) -> int:
-        h = value ^ (seed * 0x9E3779B9)
+    def _hash(self, value: T, seed: int) -> int:
+        h = hash(value) ^ (seed * 0x9E3779B9)
         h &= 0xFFFFFFFF
         h ^= h >> 16
         h = (h * 0x85EBCA6B) & 0xFFFFFFFF
@@ -24,9 +29,9 @@ class BloomFilter:
         h ^= h >> 16
         return h % self._m
 
-    def insert(self, value: int) -> None:
+    def insert(self, value: T) -> None:
         for i in range(self._k):
             self._bits[self._hash(value, i)] = 1
 
-    def contains(self, value: int) -> bool:
+    def contains(self, value: T) -> bool:
         return all(self._bits[self._hash(value, i)] for i in range(self._k))

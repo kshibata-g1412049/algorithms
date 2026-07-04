@@ -11,19 +11,24 @@
 """
 
 
-class Stack:
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
+class Stack(Generic[T]):
     def __init__(self) -> None:
         self._data: list = []
 
-    def push(self, value: int) -> None:
+    def push(self, value: T) -> None:
         self._data.append(value)
 
-    def pop(self) -> int:
+    def pop(self) -> T:
         if not self._data:
             raise IndexError("stack is empty")
         return self._data.pop()
 
-    def peek(self) -> int:
+    def peek(self) -> T:
         if not self._data:
             raise IndexError("stack is empty")
         return self._data[-1]

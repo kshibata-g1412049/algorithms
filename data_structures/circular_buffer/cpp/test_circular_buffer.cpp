@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 namespace {
 bool allPassed = true;
@@ -15,19 +16,19 @@ void check(const std::string& n, bool c, const std::string& d = "assertion faile
 } // namespace
 
 int main() {
-    { CircularBuffer b(3); check("new is empty", b.is_empty()); }
-    { CircularBuffer b(3); check("new size 0", b.size() == 0); }
-    { CircularBuffer b(3); check("capacity 3", b.capacity() == 3); }
+    { CircularBuffer<int> b(3); check("new is empty", b.is_empty()); }
+    { CircularBuffer<int> b(3); check("new size 0", b.size() == 0); }
+    { CircularBuffer<int> b(3); check("capacity 3", b.capacity() == 3); }
 
     {
-        CircularBuffer b(3);
+        CircularBuffer<int> b(3);
         b.push(1); b.push(2); b.push(3);
         check("full after 3 pushes", b.is_full());
         check("peek front", b.peek() == 1);
     }
 
     {
-        CircularBuffer b(3);
+        CircularBuffer<int> b(3);
         b.push(1); b.push(2); b.push(3);
         check("pop FIFO 1", b.pop() == 1);
         check("pop FIFO 2", b.pop() == 2);
@@ -37,21 +38,29 @@ int main() {
     }
 
     {
-        CircularBuffer b(2);
+        CircularBuffer<int> b(2);
         b.push(1); b.push(2);
         try { b.push(3); fail("push full throws", "no exception"); }
         catch (const std::overflow_error&) { pass("push full throws"); }
     }
 
     {
-        CircularBuffer b(2);
+        CircularBuffer<int> b(2);
         try { b.pop(); fail("pop empty throws", "no exception"); }
         catch (const std::underflow_error&) { pass("pop empty throws"); }
     }
 
     {
-        try { CircularBuffer b(0); fail("zero capacity throws", "no exception"); }
+        try { CircularBuffer<int> b(0); fail("zero capacity throws", "no exception"); }
         catch (const std::invalid_argument&) { pass("zero capacity throws"); }
+    }
+
+    // --- 非int型（テンプレート動作確認） ---
+    {
+        CircularBuffer<std::string> b(2);
+        b.push("a"); b.push("b");
+        check("string is_full", b.is_full());
+        check("string pop", b.pop() == "a");
     }
 
     return allPassed ? EXIT_SUCCESS : EXIT_FAILURE;

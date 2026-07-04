@@ -17,17 +17,22 @@ import random
 _MAX_LEVEL = 16
 
 
+from typing import Generic, TypeVar
+
+T = TypeVar("T")
+
+
 class _Node:
     __slots__ = ("val", "forward")
 
-    def __init__(self, val: int, level: int) -> None:
+    def __init__(self, val: T, level: int) -> None:
         self.val = val
         self.forward: List[Optional["_Node"]] = [None] * (level + 1)
 
 
-class SkipList:
+class SkipList(Generic[T]):
     def __init__(self, seed: int = 42) -> None:
-        self._head = _Node(-(1 << 31), _MAX_LEVEL)
+        self._head = _Node(None, _MAX_LEVEL)  # センチネル（値は比較に使われない）
         self._level = 0
         self._size = 0
         self._rng = random.Random(seed)
@@ -38,7 +43,7 @@ class SkipList:
             lvl += 1
         return lvl
 
-    def insert(self, value: int) -> None:
+    def insert(self, value: T) -> None:
         update: List[Optional[_Node]] = [None] * (_MAX_LEVEL + 1)
         cur = self._head
         for i in range(self._level, -1, -1):
@@ -59,7 +64,7 @@ class SkipList:
             update[i].forward[i] = node
         self._size += 1
 
-    def search(self, value: int) -> bool:
+    def search(self, value: T) -> bool:
         cur = self._head
         for i in range(self._level, -1, -1):
             while cur.forward[i] and cur.forward[i].val < value:
@@ -67,7 +72,7 @@ class SkipList:
         cur = cur.forward[0]
         return cur is not None and cur.val == value
 
-    def remove(self, value: int) -> bool:
+    def remove(self, value: T) -> bool:
         update: List[Optional[_Node]] = [None] * (_MAX_LEVEL + 1)
         cur = self._head
         for i in range(self._level, -1, -1):
